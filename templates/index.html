@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Upload and Mapping</title>
+    <style>
+        /* Your existing CSS styles here */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload CSV File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <label for="file">Choose CSV file:</label>
+        <input type="file" id="file" name="file" accept=".csv" required>
+
+        <label for="name_col">Select Name Column:</label>
+        <select id="name_col" name="name_col" required>
+            <!-- Options will be dynamically added using JavaScript -->
+        </select>
+
+        <label for="age_col">Select Age Column:</label>
+        <select id="age_col" name="age_col" required>
+            <!-- Options will be dynamically added using JavaScript -->
+        </select>
+
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        function validateForm() {
+            // You can add additional form validation logic here if needed
+            return true;
+        }
+
+        document.getElementById('file').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const contents = e.target.result;
+                    const lines = contents.split('\n');
+                    const headers = lines[0].split(',');
+
+                    // Populate Name Column select
+                    const nameColSelect = document.getElementById('name_col');
+                    populateSelect(nameColSelect, headers);
+
+                    // Populate Age Column select
+                    const ageColSelect = document.getElementById('age_col');
+                    populateSelect(ageColSelect, headers);
+                };
+
+                reader.readAsText(file);
+            }
+        }
+
+        function populateSelect(selectElement, options) {
+            selectElement.innerHTML = '';
+
+            for (const option of options) {
+                const optionElement = document.createElement('option');
+                optionElement.text = option.trim();
+                optionElement.value = option.trim();
+                selectElement.add(optionElement);
+            }
+        }
+    </script>
+</body>
+</html>
